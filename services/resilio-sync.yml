@@ -7,7 +7,7 @@ services:
       - PUID=1000
       - PGID=1000
     volumes:
-      - /mnt/RemoteVolumes/resilio-sync/config:/config
+      - /opt/resilio-sync/config:/config
       - /mnt/RemoteVolumes/resilio-sync/downloads:/downloads
       - /mnt/RemoteVolumes/resilio-sync/data:/sync
     ports:
