@@ -1,17 +1,16 @@
-# More info at https://github.com/pi-hole/docker-pi-hole/ and https://docs.pi-hole.net/
+# docker-compose.yml
 services:
   pihole:
     container_name: pihole
     image: pihole/pihole:latest
     ports:
-      # dns ports
-      - "53:53/tcp"
-      - "53:53/udp"
-      - "8443:443/tcp"
+      - "192.168.1.98:53:53/tcp"
+      - "192.168.1.98:53:53/udp"
+      - "8443:443/tcp"   # Pi-hole admin via HTTPS
     environment:
-      TZ: 'America/Los_Angeles'
+      TZ: "America/Los_Angeles"
     volumes:
-      - 'pihole:/etc/pihole'
+      - "pihole:/etc/pihole"
     restart: unless-stopped
 
 volumes:
