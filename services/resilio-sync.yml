@@ -21,9 +21,5 @@ volumes:
     driver: local
     driver_opts:
       type: cifs
-      device: "//${CIFS_HOST}/${CIFS_SHARE}/resilio-sync"  # parent dir on the share
-      o: >
-        credentials=/root/.smbcredentials,
-        uid=1000,gid=1000,
-        file_mode=0770,dir_mode=0770,
-        noperm,nounix,noserverino,iocharset=utf8,vers=3.0
+      o: username=${CIFS_USER},password=${CIFS_PASS},domain=${CIFS_DOMAIN},vers=3.0
+      device: "//${CIFS_HOST}/${CIFS_SHARE}/resilio-sync-content"
