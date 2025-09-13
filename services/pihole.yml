@@ -14,5 +14,5 @@ services:
     environment:
       TZ: 'America/Los_Angeles'
     volumes:
-      - '/mnt/RemoteVolumes/etc-pihole:/etc/pihole'
+      - '/pihole:/etc/pihole'
     restart: unless-stopped
