@@ -6,13 +6,27 @@ services:
         environment:
             - TZ=Etc/UTC
         ports:
-            - "7443:443" # HTTPS
+            - "7443:8443" # HTTPS
             - "8123:8123" # DYNMAP
             - "19132:19132/udp" # BEDROCK
             - "25500-25600:25500-25600" # MC SERV PORT RANGE
         volumes:
-            - ./docker/backups:/crafty/backups
+            - crafty-backups:/crafty/backups
             - ./docker/logs:/crafty/logs
             - ./docker/servers:/crafty/servers
             - ./docker/config:/crafty/app/config
-            - ./docker/import:/crafty/import
+            - crafty-import:/crafty/import
+
+volumes:
+    crafty-backups:
+        driver: local
+        driver_opts:
+          type: "cifs"
+          device: "//${CIFS_HOST}/${CIFS_SHARE}/crafty/crafty-backups"
+          o: 'username=${CIFS_USER},password=${CIFS_PASS},vers=3.0,uid=1000,gid=1000,iocharset=utf8,file_mode=0775,dir_mode=0775,noperm,nounix,mfsymlinks'
+    crafty-import:
+        driver: local
+        driver_opts:
+          type: "cifs"
+          device: "//${CIFS_HOST}/${CIFS_SHARE}/crafty/crafty-import"
+          o: 'username=${CIFS_USER},password=${CIFS_PASS},vers=3.0,uid=1000,gid=1000,iocharset=utf8,file_mode=0775,dir_mode=0775,noperm,nounix,mfsymlinks'
