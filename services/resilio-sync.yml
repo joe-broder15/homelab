@@ -3,11 +3,12 @@ services:
     image: resilio/sync:latest
     container_name: resilio-sync
     volumes:
-      - Resilio-Sync:/mnt/sync
+      - resilio-sync:/mnt/sync
     ports:
       - 8888:8888
       - 55555:55555
     restart: unless-stopped
 
 volumes:
-  Resilio-Sync: {}
+  resilio-sync:
+    external: true
