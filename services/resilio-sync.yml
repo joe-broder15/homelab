@@ -17,7 +17,6 @@ services:
 volumes:
   resilio-config: {}
 
-volumes:
   resilio-sync-content:
     driver: local
     driver_opts:
