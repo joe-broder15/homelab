@@ -21,5 +21,5 @@ volumes:
     driver: local
     driver_opts:
       type: cifs
-      o: username=${CIFS_USER},password=${CIFS_PASS},domain=${CIFS_DOMAIN},vers=3.0
+      o: username=${CIFS_USER},password=${CIFS_PASS},vers=3.0
       device: "//${CIFS_HOST}/${CIFS_SHARE}/resilio-sync-content"
