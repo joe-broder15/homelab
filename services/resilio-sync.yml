@@ -2,10 +2,10 @@ services:
   resilio-sync:
     image: lscr.io/linuxserver/resilio-sync:latest
     container_name: resilio-sync
-    # environment:
-    #   - PUID=1000
-    #   - PGID=1000
-    #   - TZ=Etc/UTC
+    environment:
+      - PUID=1000
+      - PGID=1000
+      - TZ=Etc/UTC
     volumes:
       - resilio-config:/config                  # local config (fast, safe for DB & settings)
       - resilio-sync-content:/sync              # mapped to CIFS share for synced folders
@@ -17,9 +17,10 @@ services:
 volumes:
   resilio-config: {}
 
+volumes:
   resilio-sync-content:
     driver: local
     driver_opts:
       type: cifs
-      o: username=${CIFS_USER},password=${CIFS_PASS},vers=3.0
+      o: username=${CIFS_USER},password=${CIFS_PASS},vers=3.0,uid=1000,gid=1000,file_mode=0770,dir_mode=0770
       device: "//${CIFS_HOST}/${CIFS_SHARE}/resilio-sync-content"
