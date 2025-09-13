@@ -7,8 +7,8 @@ services:
       - PGID=1000
       - TZ=Etc/UTC
     volumes:
-      - resilio-config:/config                  # local config (fast, safe for DB & settings)
-      - resilio-sync-content:/sync              # mapped to CIFS share for synced folders
+      - resilio-config:/config
+      - resilio-sync-content:/sync    # this is the “Default folder” root in the UI
     ports:
       - "8888:8888"
       - "55555:55555/udp"
@@ -21,5 +21,8 @@ volumes:
     driver: local
     driver_opts:
       type: cifs
-      o: username=${CIFS_USER},password=${CIFS_PASS},vers=3.0,uid=1000,gid=1000,file_mode=0770,dir_mode=0770
       device: "//${CIFS_HOST}/${CIFS_SHARE}/resilio-sync-content"
+      o: >-
+        username=${CIFS_USER},password=${CIFS_PASS},vers=3.0,
+        uid=1000,gid=1000,file_mode=0775,dir_mode=0775,
+        noperm,nounix,mfsymlinks
