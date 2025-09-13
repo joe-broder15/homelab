@@ -2,17 +2,28 @@ services:
   resilio-sync:
     image: resilio/sync:latest
     container_name: resilio-sync
+    # environment:
+    #   - PUID=1000           # set to the user id you want the app to run as
+    #   - PGID=1000           # set to the group id you want the app to run as
+    #   - UMASK=002
     volumes:
-      - resilio-sync:/mnt/sync
+      - resilio-config:/config     # local; safe/fast for DB & settings
+      - resilio-sync-content:/mnt/sync        # ONE parent folder on the SMB share
     ports:
-      - 8888:8888
-      - 55555:55555
+      - "8888:8888"
+      - "55555:55555/udp"
     restart: unless-stopped
 
 volumes:
-  resilio-sync:
+  resilio-config: {}
+
+  resilio-sync-content:
     driver: local
     driver_opts:
       type: cifs
-      o: username=${CIFS_USER},password=${CIFS_PASS},vers=3.0
-      device: "//${CIFS_HOST}/${CIFS_SHARE}/resilio-sync"
+      device: "//${CIFS_HOST}/${CIFS_SHARE}/resilio-sync"  # parent dir on the share
+      o: >
+        credentials=/root/.smbcredentials,
+        uid=1000,gid=1000,
+        file_mode=0770,dir_mode=0770,
+        noperm,nounix,noserverino,iocharset=utf8,vers=3.0
