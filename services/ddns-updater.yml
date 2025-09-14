@@ -1,0 +1,10 @@
+services:
+  namecheap-ddns:
+    image: linuxshots/namecheap-ddns:latest
+    container_name: namecheap-ddns
+    restart: unless-stopped
+    environment:
+      # Required by the image
+      NC_HOST: ${NC_HOST}      # e.g. "server" if your record is server.example.com
+      NC_DOMAIN: ${NC_DOMAIN}  # e.g. "example.com"
+      NC_PASS: ${NC_PASS}      # the Dynamic DNS password from Namecheap
