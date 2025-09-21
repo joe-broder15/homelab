@@ -3,9 +3,6 @@ services:
     image: plexinc/pms-docker
     container_name: plex
     network_mode: host
-    environment:
-      - TZ=<timezone>
-      - PLEX_CLAIM=<claimToken>
     volumes:
       - plex-database:/config
       - plex-transcode:/transcode
