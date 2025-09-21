@@ -1,0 +1,23 @@
+services:
+  plex:
+    image: plexinc/pms-docker
+    container_name: plex
+    network_mode: host
+    environment:
+      - TZ=<timezone>
+      - PLEX_CLAIM=<claimToken>
+    volumes:
+      - plex-database:/config
+      - plex-transcode:/transcode
+      - plex-media-folder:/data
+    restart: unless-stopped
+
+volumes:
+  plex-media-folder:
+      driver: local
+      driver_opts:
+        type: "cifs"
+        device: "//${CIFS_HOST}/${PLEX_CIFS_SHARE}"
+        o: 'username=${CIFS_USER},password=${CIFS_PASS},vers=3.0,uid=1000,gid=1000,iocharset=utf8,file_mode=0775,dir_mode=0775,noperm,nounix,mfsymlinks'
+  plex-transcode: {}
+  plex-database: {}
