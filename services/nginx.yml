@@ -1,5 +1,5 @@
 services:
-  nginx-proxy-manager:
+  app:
     image: 'jc21/nginx-proxy-manager:latest'
     restart: unless-stopped
     ports:
@@ -22,9 +22,9 @@ services:
       - nginx-proxy-manager-data:/data
       - nginx-proxy-manager-letsencrypt:/etc/letsencrypt
     depends_on:
-      - nginx-proxy-manager-db
+      - db
 
-  nginx-proxy-manager-db:
+  db:
     image: 'jc21/mariadb-aria:latest'
     restart: unless-stopped
     environment:
