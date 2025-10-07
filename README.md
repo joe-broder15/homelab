@@ -61,5 +61,16 @@ NPM_DB_ROOT_PASSWORD=strong-root-password
 - `services/plex.yml`: Plex Media Server.
 - `services/nginx.yml`: Nginx Proxy Manager with MariaDB backend.
 
+## Service Ports
+
+| Service | Ports | Notes |
+| --- | --- | --- |
+| Pi-hole (`services/pihole.yml`) | `192.168.1.98:53->53/tcp`, `192.168.1.98:53->53/udp`; `8443->443/tcp` | DNS; Admin UI (HTTPS) |
+| Resilio Sync (`services/resilio-sync.yml`) | `8888->8888/tcp`; `55555->55555/udp` | Web UI; Sync data |
+| Crafty (`services/crafty.yml`) | `7443->8443/tcp`; `8123->8123/tcp`; `19132->19132/udp`; `25500-25600->25500-25600/tcp` | HTTPS UI; Dynmap; Bedrock; MC server range |
+| DDNS Updater (`services/ddns-updater.yml`) | — | No ports exposed |
+| Plex (`services/plex.yml`) | host network (e.g., `32400/tcp`, `1900/udp`, `32469/tcp`, `5353/udp`, `32410-32414/udp`) | Defaults vary; exposed directly on host |
+| Nginx Proxy Manager (`services/nginx.yml`) | `80->80/tcp`; `443->443/tcp`; `81->81/tcp` | HTTP; HTTPS; Admin UI |
+
 ## Compose Entry
 The root `docker-compose.yml` includes all service files in `services/` for a single `docker compose up -d`.
