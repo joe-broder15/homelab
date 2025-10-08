@@ -1,0 +1,30 @@
+services:
+  qbittorrent:
+    image: "qbittorrentofficial/qbittorrent-nox:${QBT_VERSION:-latest}"
+    container_name: qbittorrent-nox
+    restart: unless-stopped
+    read_only: true
+    stop_grace_period: 30m
+    tmpfs:
+      - /tmp
+    environment:
+      QBT_LEGAL_NOTICE: ${QBT_LEGAL_NOTICE:-confirm}
+      QBT_TORRENTING_PORT: ${QBT_TORRENTING_PORT:-6881}
+      QBT_WEBUI_PORT: ${QBT_WEBUI_PORT:-8080}
+    ports:
+      - "${QBT_TORRENTING_PORT:-6881}:${QBT_TORRENTING_PORT:-6881}/tcp"
+      - "${QBT_TORRENTING_PORT:-6881}:${QBT_TORRENTING_PORT:-6881}/udp"
+      - "${QBT_WEBUI_PORT:-8080}:${QBT_WEBUI_PORT:-8080}/tcp"
+    volumes:
+      - qbittorrent-config:/config
+      - plex-media-folder:/downloads
+
+volumes:
+  plex-media-folder:
+    driver: local
+    driver_opts:
+      type: "cifs"
+      device: "//${CIFS_HOST}/${PLEX_CIFS_SHARE}"
+      o: 'username=${CIFS_USER},password=${CIFS_PASS},vers=3.0,uid=1000,gid=1000,iocharset=utf8,file_mode=0775,dir_mode=0775,noperm,nounix,mfsymlinks'
+
+  qbittorrent-config: {}

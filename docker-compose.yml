@@ -4,4 +4,5 @@ include:
   - services/crafty.yml
   - services/ddns-updater.yml
   - services/plex.yml
+  - services/qbittorrent.yml
   - services/nginx.yml
