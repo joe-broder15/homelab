@@ -7,35 +7,28 @@ Docker Compose definitions for my homelab services.
 - Bring everything up: `docker compose up -d`
 
 ## Hosted Services
-- Pi-hole
-- Resilio Sync
-- Crafty Controller
-- Namecheap DDNS Updater
-- Plex Media Server
-- Homepage Dashboard
-- qBittorrent-nox
-- Nginx Proxy Manager
+- Pi-hole (`services/pihole.yml`) — DNS sinkhole and network-wide ad blocker.
+- Resilio Sync (`services/resilio-sync.yml`) — self-hosted file synchronisation.
+- Crafty Controller (`services/crafty.yml`) — management UI for Minecraft servers.
+- Namecheap DDNS Updater (`services/ddns-updater.yml`) — keeps DNS records pointed at your WAN IP.
+- Plex Media Server (`services/plex.yml`) — streaming for the media library mounted over SMB.
+- qBittorrent-nox (`services/qbittorrent.yml`) — headless torrent client writing into the Plex media share.
 
 ## Environment Variables
 These variables are read by the Compose files and images. Define them in a `.env` file at the repo root.
 
 | Variable | Used By | Purpose |
 | --- | --- | --- |
-| `CIFS_HOST` | Crafty, Resilio Sync, Plex, Homepage | SMB server hostname/IP for mounted volumes |
-| `CIFS_SHARE` | Crafty, Resilio Sync, Homepage | SMB share name for general mounts |
-| `CIFS_USER` | Crafty, Resilio Sync, Plex, Homepage | SMB username for mounts |
-| `CIFS_PASS` | Crafty, Resilio Sync, Plex, Homepage | SMB password for mounts |
-| `PLEX_CIFS_SHARE` | Plex | SMB share name for Plex media |
-| `TZ` | Crafty, Resilio Sync, Pi-hole | Container timezone (e.g., `Etc/UTC`, `America/Los_Angeles`) |
-| `PUID` | Resilio Sync | User ID for file ownership inside container |
-| `PGID` | Resilio Sync | Group ID for file ownership inside container |
+| `CIFS_HOST` | Crafty, Resilio Sync, Plex, qBittorrent | SMB server hostname/IP for mounted volumes |
+| `CIFS_SHARE` | Crafty, Resilio Sync | SMB share name for Crafty and Resilio SMB mounts |
+| `CIFS_USER` | Crafty, Resilio Sync, Plex, qBittorrent | SMB username for mounts |
+| `CIFS_PASS` | Crafty, Resilio Sync, Plex, qBittorrent | SMB password for mounts |
+| `PLEX_CIFS_SHARE` | Plex, qBittorrent | SMB share name that contains the Plex media library and torrent downloads |
 | `NC_HOST` | DDNS Updater | Namecheap record host (e.g., `server` for `server.example.com`) |
 | `NC_DOMAIN` | DDNS Updater | Namecheap root domain (e.g., `example.com`) |
 | `NC_PASS` | DDNS Updater | Namecheap Dynamic DNS password |
-| `NPM_DB_USER` | Nginx Proxy Manager (app, db) | Database username for NPM |
-| `NPM_DB_PASSWORD` | Nginx Proxy Manager (app, db) | Database password for NPM |
-| `NPM_DB_NAME` | Nginx Proxy Manager (app, db) | Database name for NPM |
-| `NPM_DB_ROOT_PASSWORD` | Nginx Proxy Manager (db) | MariaDB root password |
+
+> The compose files currently pin timezone and UID/GID values directly inside the service definitions. Edit the relevant `services/*.yml` file if you need different values for those settings.
 
 ### .env Example
 ```
@@ -46,32 +39,19 @@ CIFS_USER=your-smb-user
 CIFS_PASS=your-smb-pass
 PLEX_CIFS_SHARE=media
 
-# Timezone and IDs
-TZ=Etc/UTC
-PUID=1000
-PGID=1000
-
 # Namecheap DDNS
 NC_HOST=server
 NC_DOMAIN=example.com
 NC_PASS=your-ddns-pass
-
-# Nginx Proxy Manager DB
-NPM_DB_USER=npm
-NPM_DB_PASSWORD=strong-password
-NPM_DB_NAME=npm
-NPM_DB_ROOT_PASSWORD=strong-root-password
 ```
 
 ## Services
-- `services/pihole.yml`: Pi-hole DNS sinkhole.
-- `services/resilio-sync.yml`: Resilio Sync for file synchronization.
-- `services/crafty.yml`: Crafty Controller for Minecraft servers.
-- `services/ddns-updater.yml`: Namecheap DDNS updater.
-- `services/plex.yml`: Plex Media Server.
-- `services/qbittorrent.yml`: qBittorrent-nox headless client.
-- `services/nginx.yml`: Nginx Proxy Manager with MariaDB backend.
-- `services/homepage.yml`: Homepage dashboard service.
+- `services/pihole.yml`: Pi-hole DNS sinkhole storing configuration inside the `pihole` Docker volume and exposing DNS on `192.168.1.98`.
+- `services/resilio-sync.yml`: Resilio Sync with SMB-backed storage at `//${CIFS_HOST}/${CIFS_SHARE}/resilio-sync-content` for synchronized data.
+- `services/crafty.yml`: Crafty Controller mounting SMB volumes for backups and imports, plus local directories for logs, configs, and servers.
+- `services/ddns-updater.yml`: Namecheap Dynamic DNS updater using the credentials from `.env`.
+- `services/plex.yml`: Plex Media Server running in host network mode with SMB media storage and dedicated config/transcode volumes.
+- `services/qbittorrent.yml`: qBittorrent-nox writing downloads into the same SMB share Plex reads from.
 
 ## Service Ports
 
@@ -95,18 +75,6 @@ NPM_DB_ROOT_PASSWORD=strong-root-password
   - `6881->6881/tcp` — BitTorrent peer traffic
   - `6881->6881/udp` — DHT/peer discovery
   - `8080->8080/tcp` — Web UI
-- Nginx Proxy Manager (`services/nginx.yml`)
-  - `80->80/tcp` — HTTP
-  - `443->443/tcp` — HTTPS
-  - `81->81/tcp` — Admin UI
-- Homepage Dashboard (`services/homepage.yml`)
-  - `3000->3000/tcp` — Web dashboard
-
-## Homepage Configuration
-
-- `homepage/config/` stores settings, services, widgets, and bookmarks that surface the full homelab stack.
-- Sync changes into the `homepage-config` Docker volume with the Ansible playbook in `ansible/playbook.yml`.
-- From the repo root run: `cd ansible && ansible-playbook playbook.yml`.
 
 ## Compose Entry
-The root `docker-compose.yml` includes all service files in `services/` for a single `docker compose up -d`.
+The root `docker-compose.yml` is a thin include file. List whichever `services/*.yml` definitions you want to run there, then launch the stack with `docker compose up -d` from the repo root.
