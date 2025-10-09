@@ -1,0 +1,25 @@
+- name: Essentials
+  columns: 2
+  widgets:
+    - datetime:
+        format: en-GB
+        hourCycle: h23
+    - search:
+        provider: duckduckgo
+- name: Service Reachability
+  columns: 3
+  widgets:
+    - ping:
+        hosts:
+          - hostname: pihole
+            name: Pi-hole
+          - hostname: plex
+            name: Plex
+          - hostname: qbittorrent
+            name: qBittorrent
+          - hostname: nginx
+            name: Nginx Proxy Manager
+          - hostname: crafty
+            name: Crafty Controller
+          - hostname: resilio-sync
+            name: Resilio Sync

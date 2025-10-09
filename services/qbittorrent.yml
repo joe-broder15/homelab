@@ -1,6 +1,6 @@
 services:
   qbittorrent:
-    image: "qbittorrentofficial/qbittorrent-nox:${QBT_VERSION:-latest}"
+    image: "qbittorrentofficial/qbittorrent-nox:latest"
     container_name: qbittorrent-nox
     restart: unless-stopped
     read_only: true
@@ -8,13 +8,13 @@ services:
     tmpfs:
       - /tmp
     environment:
-      QBT_LEGAL_NOTICE: ${QBT_LEGAL_NOTICE:-confirm}
-      QBT_TORRENTING_PORT: ${QBT_TORRENTING_PORT:-6881}
-      QBT_WEBUI_PORT: ${QBT_WEBUI_PORT:-8080}
+      QBT_LEGAL_NOTICE: "confirm"
+      QBT_TORRENTING_PORT: "6881"
+      QBT_WEBUI_PORT: "8080"
     ports:
-      - "${QBT_TORRENTING_PORT:-6881}:${QBT_TORRENTING_PORT:-6881}/tcp"
-      - "${QBT_TORRENTING_PORT:-6881}:${QBT_TORRENTING_PORT:-6881}/udp"
-      - "${QBT_WEBUI_PORT:-8080}:${QBT_WEBUI_PORT:-8080}/tcp"
+      - "6881:6881/tcp"
+      - "6881:6881/udp"
+      - "8080:8080/tcp"
     volumes:
       - qbittorrent-config:/config
       - plex-media-folder:/downloads

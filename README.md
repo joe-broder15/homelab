@@ -12,6 +12,7 @@ Docker Compose definitions for my homelab services.
 - Crafty Controller
 - Namecheap DDNS Updater
 - Plex Media Server
+- Homepage Dashboard
 - qBittorrent-nox
 - Nginx Proxy Manager
 
@@ -20,15 +21,11 @@ These variables are read by the Compose files and images. Define them in a `.env
 
 | Variable | Used By | Purpose |
 | --- | --- | --- |
-| `CIFS_HOST` | Crafty, Resilio Sync, Plex | SMB server hostname/IP for mounted volumes |
-| `CIFS_SHARE` | Crafty, Resilio Sync | SMB share name for general mounts |
-| `CIFS_USER` | Crafty, Resilio Sync, Plex | SMB username for mounts |
-| `CIFS_PASS` | Crafty, Resilio Sync, Plex | SMB password for mounts |
+| `CIFS_HOST` | Crafty, Resilio Sync, Plex, Homepage | SMB server hostname/IP for mounted volumes |
+| `CIFS_SHARE` | Crafty, Resilio Sync, Homepage | SMB share name for general mounts |
+| `CIFS_USER` | Crafty, Resilio Sync, Plex, Homepage | SMB username for mounts |
+| `CIFS_PASS` | Crafty, Resilio Sync, Plex, Homepage | SMB password for mounts |
 | `PLEX_CIFS_SHARE` | Plex | SMB share name for Plex media |
-| `QBT_VERSION` | qBittorrent-nox | Container image tag (defaults to `latest`) |
-| `QBT_LEGAL_NOTICE` | qBittorrent-nox | Required legal acknowledgement (set to `confirm`) |
-| `QBT_TORRENTING_PORT` | qBittorrent-nox | Listening port for BitTorrent traffic |
-| `QBT_WEBUI_PORT` | qBittorrent-nox | Port for the web UI |
 | `TZ` | Crafty, Resilio Sync, Pi-hole | Container timezone (e.g., `Etc/UTC`, `America/Los_Angeles`) |
 | `PUID` | Resilio Sync | User ID for file ownership inside container |
 | `PGID` | Resilio Sync | Group ID for file ownership inside container |
@@ -48,12 +45,6 @@ CIFS_SHARE=homelab
 CIFS_USER=your-smb-user
 CIFS_PASS=your-smb-pass
 PLEX_CIFS_SHARE=media
-
-# qBittorrent-nox
-QBT_VERSION=latest
-QBT_LEGAL_NOTICE=confirm
-QBT_TORRENTING_PORT=6881
-QBT_WEBUI_PORT=8080
 
 # Timezone and IDs
 TZ=Etc/UTC
@@ -80,6 +71,7 @@ NPM_DB_ROOT_PASSWORD=strong-root-password
 - `services/plex.yml`: Plex Media Server.
 - `services/qbittorrent.yml`: qBittorrent-nox headless client.
 - `services/nginx.yml`: Nginx Proxy Manager with MariaDB backend.
+- `services/homepage.yml`: Homepage dashboard service.
 
 ## Service Ports
 
@@ -100,13 +92,21 @@ NPM_DB_ROOT_PASSWORD=strong-root-password
 - Plex (`services/plex.yml`)
   - Host network — commonly `32400/tcp`, `1900/udp`, `32469/tcp`, `5353/udp`, `32410-32414/udp`
 - qBittorrent-nox (`services/qbittorrent.yml`)
-  - `6881->6881/tcp` — BitTorrent peer traffic (override with `QBT_TORRENTING_PORT`)
-  - `6881->6881/udp` — DHT/peer discovery (override with `QBT_TORRENTING_PORT`)
-  - `8080->8080/tcp` — Web UI (override with `QBT_WEBUI_PORT`)
+  - `6881->6881/tcp` — BitTorrent peer traffic
+  - `6881->6881/udp` — DHT/peer discovery
+  - `8080->8080/tcp` — Web UI
 - Nginx Proxy Manager (`services/nginx.yml`)
   - `80->80/tcp` — HTTP
   - `443->443/tcp` — HTTPS
   - `81->81/tcp` — Admin UI
+- Homepage Dashboard (`services/homepage.yml`)
+  - `3000->3000/tcp` — Web dashboard
+
+## Homepage Configuration
+
+- `homepage/config/` stores settings, services, widgets, and bookmarks that surface the full homelab stack.
+- Sync changes into the `homepage-config` Docker volume with the Ansible playbook in `ansible/playbook.yml`.
+- From the repo root run: `cd ansible && ansible-playbook playbook.yml`.
 
 ## Compose Entry
 The root `docker-compose.yml` includes all service files in `services/` for a single `docker compose up -d`.

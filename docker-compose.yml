@@ -6,3 +6,4 @@ include:
   - services/plex.yml
   - services/qbittorrent.yml
   - services/nginx.yml
+  - services/homepage.yml
