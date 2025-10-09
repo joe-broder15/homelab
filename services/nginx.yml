@@ -1,5 +1,5 @@
 services:
-  app:
+  nginx-proxy-app:
     image: 'jc21/nginx-proxy-manager:latest'
     restart: unless-stopped
     ports:
@@ -24,7 +24,7 @@ services:
     depends_on:
       - db
 
-  db:
+  nginx-proxy-db:
     image: 'jc21/mariadb-aria:latest'
     restart: unless-stopped
     environment:
