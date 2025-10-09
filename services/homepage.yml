@@ -9,7 +9,7 @@ services:
       - homepage-config:/app/config
       - /var/run/docker.sock:/var/run/docker.sock:ro
     environment:
-    - 'HOMEPAGE_ALLOWED_HOSTS=192.168.1.98:3000,homepage.local.clubtropicalexcellent.vip'
+    - 'HOMEPAGE_ALLOWED_HOSTS=*'
 
 volumes:
   homepage-config: {}
