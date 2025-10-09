@@ -5,5 +5,3 @@ include:
   - services/ddns-updater.yml
   - services/plex.yml
   - services/qbittorrent.yml
-  - services/nginx.yml
-  - services/homepage.yml
